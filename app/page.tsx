@@ -69,8 +69,6 @@ export default function SkiGame() {
   const BASE_SPAWN_INTERVAL = 550
   const SPAWN_INTERVAL_MEDIUM = 480
   const SPAWN_INTERVAL_FAST = 420
-  const TREE_WIDTH = 50
-  const TREE_HEIGHT = 60
   const BASE_TURN_ACCELERATION = 0.08
   const MAX_TURN_VELOCITY = 4
   const TURN_DAMPING = 0.92
@@ -176,7 +174,7 @@ export default function SkiGame() {
     [SKIER_SIZE],
   )
 
-  const drawTree = useCallback(
+  const drawTreeTrunk = useCallback(
     (ctx: CanvasRenderingContext2D, x: number, y: number, cameraShakeX: number, cameraShakeY: number) => {
       const shakeX = x + cameraShakeX
       const shakeY = y + cameraShakeY
@@ -184,6 +182,14 @@ export default function SkiGame() {
       // Brown trunk
       ctx.fillStyle = "#92400e"
       ctx.fillRect(shakeX - 8, shakeY + 20, 16, 20)
+    },
+    [],
+  )
+
+  const drawTreeTriangle = useCallback(
+    (ctx: CanvasRenderingContext2D, x: number, y: number, cameraShakeX: number, cameraShakeY: number) => {
+      const shakeX = x + cameraShakeX
+      const shakeY = y + cameraShakeY
 
       // Layered triangles for 3D effect
       // Back layer (darker teal)
@@ -264,26 +270,32 @@ export default function SkiGame() {
         return true
       }
 
-      // Check tree collision
+      // Check tree collision - only with brown trunk (not triangle)
+      // Trunk: x - 8 to x + 8 (16px wide), y + 20 to y + 40 (20px tall)
+      const TRUNK_HEIGHT = 20
+      const TRUNK_OFFSET_X = 8
+      const TRUNK_OFFSET_Y = 20
+
       for (const tree of trees) {
         const skierLeft = skierX - SKIER_SIZE / 2
         const skierRight = skierX + SKIER_SIZE / 2
         const skierTop = skierY - SKIER_SIZE / 2
         const skierBottom = skierY + SKIER_SIZE / 2
 
-        const treeLeft = tree.x - TREE_WIDTH / 2
-        const treeRight = tree.x + TREE_WIDTH / 2
-        const treeTop = tree.y - TREE_HEIGHT / 2
-        const treeBottom = tree.y + TREE_HEIGHT / 2
+        // Only check collision with the trunk part
+        const trunkLeft = tree.x - TRUNK_OFFSET_X
+        const trunkRight = tree.x + TRUNK_OFFSET_X
+        const trunkTop = tree.y + TRUNK_OFFSET_Y
+        const trunkBottom = tree.y + TRUNK_OFFSET_Y + TRUNK_HEIGHT
 
-        if (skierRight > treeLeft && skierLeft < treeRight && skierBottom > treeTop && skierTop < treeBottom) {
+        if (skierRight > trunkLeft && skierLeft < trunkRight && skierBottom > trunkTop && skierTop < trunkBottom) {
           return true
         }
       }
 
       return false
     },
-    [CANVAS_WIDTH, SKIER_SIZE, TREE_WIDTH, TREE_HEIGHT, SKIER_COLLISION_MARGIN],
+    [CANVAS_WIDTH, SKIER_SIZE, SKIER_COLLISION_MARGIN],
   )
 
   const gameLoop = useCallback(
@@ -400,9 +412,14 @@ export default function SkiGame() {
 
       drawTrail(ctx, state.trail, timestamp, state.cameraShakeX, state.cameraShakeY)
 
-      state.trees.forEach((tree) => drawTree(ctx, tree.x, tree.y, state.cameraShakeX, state.cameraShakeY))
+      // Draw tree trunks first (behind skier)
+      state.trees.forEach((tree) => drawTreeTrunk(ctx, tree.x, tree.y, state.cameraShakeX, state.cameraShakeY))
 
+      // Draw skier (goes behind tree triangles)
       drawSkier(ctx, state.skierX, state.skierY, state.rotation, state.cameraShakeX, state.cameraShakeY)
+
+      // Draw tree triangles last (in front of skier)
+      state.trees.forEach((tree) => drawTreeTriangle(ctx, tree.x, tree.y, state.cameraShakeX, state.cameraShakeY))
 
       if (state.avalancheY >= state.skierY - 30) {
         setGameState("gameover")
@@ -445,7 +462,8 @@ export default function SkiGame() {
       drawBackground,
       drawAvalanche,
       drawSkier,
-      drawTree,
+      drawTreeTrunk,
+      drawTreeTriangle,
       drawTrail,
       checkCollision,
       bestScore,
