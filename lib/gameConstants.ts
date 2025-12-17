@@ -1,10 +1,10 @@
 // Speed & Movement
-export const BASE_SPEED = 140
-export const SPEED_ACCELERATION = 80 // Speed increases when going straight
+export const BASE_SPEED = 200
+export const SPEED_ACCELERATION = 180 // Speed increases when going straight
 export const SPEED_DECELERATION = 40 // Base speed decrease when turning
-export const MIN_SPEED = 100
+export const MIN_SPEED = 150
 export const MAX_SPEED = 700
-export const ROTATION_SPEED_PENALTY = 2.5 // Multiplier for how much rotation affects speed loss (higher = more penalty)
+export const ROTATION_SPEED_PENALTY = 0.5 // Multiplier for how much rotation affects speed loss (higher = more penalty)
 
 // Tree Spawning
 export const BASE_SPAWN_INTERVAL = 550
@@ -12,16 +12,16 @@ export const SPAWN_INTERVAL_MEDIUM = 480
 export const SPAWN_INTERVAL_FAST = 420
 
 // Turning & Rotation
-export const BASE_TURN_ACCELERATION = 0.08
+export const BASE_TURN_ACCELERATION = 0.6
 export const MAX_TURN_VELOCITY = 4
 export const HORIZONTAL_SPEED_MULTIPLIER = 0.8 // Global multiplier for horizontal movement speed (higher = faster sideways)
-export const TURN_DAMPING = 0.12
-export const ROTATION_SPEED = 1
+export const TURN_DAMPING = 0.9
+export const ROTATION_SPEED = 0.9
 export const MAX_ROTATION = Math.PI / 6 // 30 degrees (initial max)
 export const MAX_EXTENDED_ROTATION = Math.PI / 2 // 90 degrees (horizontal)
-export const TURN_PROGRESSION_TIME = 0.5 // Time to reach initial max rotation
-export const EXTENDED_TURN_TIME = 2.0 // Additional time to reach horizontal (total = 2.5s)
-export const CURVE_FACTOR = 0.95 // How much rotation affects horizontal movement (higher = more curved)
+export const TURN_PROGRESSION_TIME = 0.1 // Time to reach initial max rotation
+export const EXTENDED_TURN_TIME = 1.0 // Additional time to reach horizontal (total = 2.5s)
+export const CURVE_FACTOR = 1 // How much rotation affects horizontal movement (higher = more curved)
 
 // Skier
 export const SKIER_SIZE = 44
@@ -29,7 +29,7 @@ export const SKIER_COLLISION_MARGIN = 14
 
 // Trail
 export const TRAIL_SPACING = 15 // pixels between trail points
-export const TRAIL_MAX_AGE = 1500 // milliseconds before trail fades
+export const TRAIL_MAX_AGE = 900 // milliseconds before trail fades
 export const TRAIL_LINE_WIDTH = 4
 
 // Skier Position
