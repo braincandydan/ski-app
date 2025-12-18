@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import type { GameState } from "@/lib/gameTypes"
+import { HINT_DISPLAY_SCORE_THRESHOLD } from "@/lib/gameConstants"
 import { useResponsiveCanvas } from "@/hooks/useResponsiveCanvas"
 import { useSpriteLoader } from "@/hooks/useSpriteLoader"
 import { useSkiGame } from "@/hooks/useSkiGame"
@@ -17,6 +18,7 @@ export default function SkiGame() {
 
   const { canvasSize, isMobile } = useResponsiveCanvas()
   const { sprite, loaded: spriteLoaded, frameWidth, frameHeight } = useSpriteLoader("/sprites/skier-sprite.png")
+  const { sprite: treeSprite, loaded: treeSpriteLoaded } = useSpriteLoader("/sprites/tree.png")
 
   const handleGameOver = (finalScore: number) => {
     setScore(finalScore)
@@ -34,6 +36,8 @@ export default function SkiGame() {
     spriteLoaded,
     frameWidth,
     frameHeight,
+    treeSprite,
+    treeSpriteLoaded,
     onGameOver: handleGameOver,
     bestScore,
   })
@@ -82,7 +86,7 @@ export default function SkiGame() {
           isMobile={isMobile}
         />
 
-        {gameState === "playing" && score < 50 && (
+        {gameState === "playing" && score < HINT_DISPLAY_SCORE_THRESHOLD && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs md:text-sm animate-pulse max-w-[90vw] text-center">
             Hold to turn • Release to go straight
           </div>
